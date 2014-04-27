@@ -46,32 +46,32 @@ ups by default, where the resource defaults to priority.
 
 Key in your hiera data sources to look up, the contents being in a form
 that the built in `create_resources` function can combine with the resource
-type to create instances of it. Defaults to 'resources_factories' on
+type to create instances of it. Defaults to *'resources_factories'* on
 the class, and has no default on the type.
 
 ####resource_type
 
 The name of the resource that `create_resources` function will produce
 from the data in our hiera key. Defaults to
-'resource_factory::defined_resource_factory' on the class, and has no
+*'resource_factory::defined_resource_factory'* on the class, and has no
 default on the type.
 
 ####enable
 
-Toggles the activation of the class or type on or off. Defaults to 'true',
+Toggles the activation of the class or type on or off. Defaults to *'true'*,
 fairly obviously. It can be handy to toggle the class off for particular nodes
 under unusual circumstances, but you'll probably get better results
 disabling specific factories.
 
 ####resource_creation
 
-Sets how the resources are created, as either the default, virtual or
-exported resources. Defaults to 'default'.
+Sets how the resources are created, as either the *default*, *virtual* or
+*exported* resources. Defaults to *'default'*.
 
 ####merged
 Sets whether to use the hiera_key in the most specific hiera source,
-or merged from all matching sources. Defaults to 'true', merging all
-factory definitions, on the class, but defaults to 'false' on the type.
+or merged from all matching sources. Defaults to *'true'*, merging all
+factory definitions, on the class, but defaults to *'false'* on the type.
 
 ##Examples
 
@@ -118,7 +118,7 @@ apt_confs:
         priority: 10
 ```
 
-In this case I've set *merge* to true, for the "general repositories
+In this case I've set `merge: true`, for the "general repositories
 plus more specific repositories" approach, however you can override
 that behaviour by setting that particular factory again in a higher
 priority context. If you want to eliminate a factory for a particular
@@ -138,6 +138,7 @@ Apache 2.0 License; a copy is included in the module.
 
 ##To Do
 
-* Write tests
+* Write tests, which means figuring out how the test frameworks operate. Pull 
+requests welcome.
 * Make the manifest docs look pretty in RDoc; which is a challenge given 
 how ugly RDoc looks by default.
