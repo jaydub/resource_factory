@@ -7,6 +7,8 @@
 3. [Usage](#usage)
 4. [Examples] (#examples)
 5. [Limitations](#limitations)
+6. [License] (#license)
+7. [To Do] (#to-do)
 
 ##Overview
 
@@ -34,31 +36,30 @@ configured out of Hiera as it should be.
 `resource_factory` and `defined_resource_factory` have almost exactly
 the same interface (and, indeed, source code), differing only in that
 one is a class, while the other is a defined resource type. The class,
-`resource_factory` also has defaults for it's hiera_key and
-resource_type, while the resource has none, and it uses merged look
+`resource_factory` also has defaults for it's *hiera_key* and
+*resource_type*, while the resource has none, and it uses merged look
 ups by default, where the resource defaults to priority.
 
 ###Parameters
 
-
 ####hiera_key
 
 Key in your hiera data sources to look up, the contents being in a form
-that the built in create_resources function can combine with the resource
+that the built in `create_resources` function can combine with the resource
 type to create instances of it. Defaults to 'resources_factories' on
 the class, and has no default on the type.
 
 ####resource_type
 
-The name of the resource that create_resources function will produce
+The name of the resource that `create_resources` function will produce
 from the data in our hiera key. Defaults to
-resource_factory::defined_resource_factory on the class, and has no
+'resource_factory::defined_resource_factory' on the class, and has no
 default on the type.
 
 ####enable
 
-Toggles the activation of the class or type on or off. Defaults to on,
-fairly obviously. It can be handy to toggle it off for specific nodes
+Toggles the activation of the class or type on or off. Defaults to 'true',
+fairly obviously. It can be handy to toggle the class off for particular nodes
 under unusual circumstances, but you'll probably get better results
 disabling specific factories.
 
@@ -70,48 +71,54 @@ exported resources. Defaults to 'default'.
 ####merged
 Sets whether to use the hiera_key in the most specific hiera source,
 or merged from all matching sources. Defaults to 'true', merging all
-factory definitions, on the class, but defaults to false on the type.
+factory definitions, on the class, but defaults to 'false' on the type.
 
 ##Examples
 
-As resource_factory will only ever be used in the context of Hiera, these
+As `resource_factory` will only ever be used in the context of Hiera, these
 examples are in the Hiera configuration context, using YAML.
 
 1. Put `resource_factory` into the included classes in your most common Hiera
 file, eg.
 
-    ---
-    classes:
-        resource_factory
-        ...
+```
+---
+classes:
+    resource_factory
+    ...
+```
 
-2. Now you can add instances of the 'resources_factories' key in
+2. Now you can add instances of the *'resources_factories'* key in
 various places. For example, if you execpt to define a bunch of APT
 related resources at some Debian derived distro level, add the
 following there:
 
-    resource_factories:
-        'apt_source_factory':
-            hiera_key:      apt_sources
-            resource_type:  apt::source
-            merge:          true
-        'apt_ppa_factory':
-            hiera_key:      apt_ppas
-            resource_type:  apt::ppa
-            merge:          true
-        'apt_conf_factory':
-            hiera_key:      apt_confs
-            resource_type:  apt::conf
-            merge:          true
+```
+resource_factories:
+    'apt_source_factory':
+        hiera_key:      apt_sources
+        resource_type:  apt::source
+        merge:          true
+    'apt_ppa_factory':
+        hiera_key:      apt_ppas
+        resource_type:  apt::ppa
+        merge:          true
+    'apt_conf_factory':
+        hiera_key:      apt_confs
+        resource_type:  apt::conf
+        merge:          true
+```
 
 3. Then you can set those hiera keys with your particular resources, eg:
 
-    apt_confs:
-        'proxy':
-            content: 'Acquire::http { Proxy "http://apt-cacher:3142/"; };'
-            priority: 10
+```
+apt_confs:
+    'proxy':
+        content: 'Acquire::http { Proxy "http://apt-cacher:3142/"; };'
+        priority: 10
+```
 
-In this case I've set 'merge' to true, for the "general repositories
+In this case I've set *merge* to true, for the "general repositories
 plus more specific repositories" approach, however you can override
 that behaviour by setting that particular factory again in a higher
 priority context. If you want to eliminate a factory for a particular
@@ -120,10 +127,17 @@ node, override it on the node with `enable: false`.
 ##Limitations
 
 This is obviously of no use to you if you don't use Hiera. It also
-needs the `create_resources`, which is available from puppet 2.7.x
+needs the `create_resources` function, which is available from puppet 2.7.x
 onwards, or via `bodepd/create_resources`, and both `hiera` and `hiera_hash`
 functions, avaiable since who knows, as puppet doesn't document
 version introduction in their function reference.
 
 ##License
 
+Apache 2.0 License; a copy is included in the module.
+
+##To Do
+
+* Write tests
+* Make the manifest docs look pretty in RDoc; which is a challenge given 
+how ugly RDoc looks by default.
