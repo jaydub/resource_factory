@@ -37,6 +37,9 @@
 #   merged from all matching sources. Defaults to 'true', merging all factory
 #   definitions.
 #
+# [defaults]
+#   Default values for resources. Defaults to an empty hash.
+#
 # === Authors
 #
 # John Morton <jwm@angrymonkey.net.nz>
@@ -52,6 +55,7 @@ define resource_factory::defined_resource_factory
   $enable = true,
   $resource_creation = 'default',
   $merge = false,
+  $defaults = {},
 )
 {
   if $enable {
@@ -66,6 +70,6 @@ define resource_factory::defined_resource_factory
     else{
       $data = hiera($hiera_key, {})
     }
-    create_resources($res_type, $data)
+    create_resources($res_type, $data, $defaults)
   }
 }
