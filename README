@@ -36,9 +36,10 @@ configured out of Hiera as it should be.
 `resource_factory` and `defined_resource_factory` have almost exactly
 the same interface (and, indeed, source code), differing only in that
 one is a class, while the other is a defined resource type. The class,
-`resource_factory` also has defaults for it's *hiera_key* and
+`resource_factory` has defaults for it's *hiera_key* and
 *resource_type*, while the resource has none, and it uses merged look
-ups by default, where the resource defaults to priority.
+ups by default, where the resource defaults to priority. The resource
+has a *defaults* field, while the class doesn't.
 
 ###Parameters
 
@@ -73,6 +74,11 @@ Sets whether to use the hiera_key in the most specific hiera source,
 or merged from all matching sources. Defaults to *'true'*, merging all
 factory definitions, on the class, but defaults to *'false'* on the type.
 
+####defaults
+A hash of fields and values to supply as default values for the
+resource being created, if your hiera data doesn't include those
+fields. Defaults to an empty hash, and is not present on the class.
+
 ##Examples
 
 As `resource_factory` will only ever be used in the context of Hiera, these
@@ -89,7 +95,7 @@ classes:
 ```
 
 2. Now you can add instances of the *'resources_factories'* key in
-various places. For example, if you execpt to define a bunch of APT
+various places. For example, if you expect to define a bunch of APT
 related resources at some Debian derived distro level, add the
 following there:
 
@@ -123,6 +129,28 @@ plus more specific repositories" approach, however you can override
 that behaviour by setting that particular factory again in a higher
 priority context. If you want to eliminate a factory for a particular
 node, override it on the node with `enable: false`.
+
+If you want to set default properties in your resources, you can do so
+with the `defaults' field. Using the above example again:
+
+```
+resource_factories:
+    'apt_conf_factory':
+        hiera_key:      apt_confs
+        resource_type:  apt::conf
+        merge:          true
+		defaults:      {priority: 10 }				
+```
+So that each apt_conf entry won't need to explicitly set priority:
+
+```
+apt_confs:
+    'proxy':
+        content: 'Acquire::http { Proxy "http://apt-cacher:3142/"; };'
+```
+
+You can even go as far as defining the same resource type with
+different sets of defaults by using different `hiera_key` names for each.
 
 ##Limitations
 
