@@ -139,7 +139,8 @@ resource_factories:
         hiera_key:      apt_confs
         resource_type:  apt::conf
         merge:          true
-		defaults:      {priority: 10 }				
+		defaults:
+			priority:   10 
 ```
 So that each apt_conf entry won't need to explicitly set priority:
 
