@@ -43,7 +43,7 @@
 #
 # === Copyright
 #
-# Copyright 2014 Your name here, unless otherwise noted.
+# Copyright 2014 John Morton, unless otherwise noted.
 #
 define resource_factory::defined_resource_factory
 (
