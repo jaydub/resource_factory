@@ -5,10 +5,11 @@
 1. [Overview](#overview)
 2. [Module Description](#module-description)
 3. [Usage](#usage)
-4. [Examples] (#examples)
+4. [Examples](#examples)
 5. [Limitations](#limitations)
-6. [License] (#license)
-7. [To Do] (#to-do)
+6. [License](#license)
+7. [Thanks](#thanks)
+8. [To Do](#to-do)
 
 ##Overview
 
@@ -164,6 +165,10 @@ version introduction in their function reference.
 ##License
 
 Apache 2.0 License; a copy is included in the module.
+
+##Thanks
+
+* Mathias Brodala, for the 'defaults' patch.
 
 ##To Do
 
