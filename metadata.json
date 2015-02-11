@@ -6,6 +6,6 @@
     "summary": "A means to create and configure resources from Hiera",
     "source": "https://github.com/jaydub/resource_factory",
     "project_url": "https://github.com/jaydub/resource_factory",
-    "issues_url:" "https://github.com/jaydub/resource_factory/issues",
+    "issues_url": "https://github.com/jaydub/resource_factory/issues",
     "dependencies": []
 }
