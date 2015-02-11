@@ -1,6 +1,6 @@
 {
     "name": "jaydub-resource_factory",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "author": "John Morton",
     "license": "Apache-2.0",
     "summary": "A means to create and configure resources from Hiera",
