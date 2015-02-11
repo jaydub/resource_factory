@@ -1,1 +1,178 @@
-README
+#resource_factory
+
+####Table of Contents
+
+1. [Overview](#overview)
+2. [Module Description](#module-description)
+3. [Usage](#usage)
+4. [Examples](#examples)
+5. [Limitations](#limitations)
+6. [License](#license)
+7. [Thanks](#thanks)
+8. [To Do](#to-do)
+
+##Overview
+
+A means to create and configure resources from Hiera, without all that
+tedious mucking about with site specific classes.
+
+##Module Description
+
+`resource_factory` acts as a wrapper around the `create_resources`
+function, allowing you to create resources on your nodes configured
+out of Hiera. `Virtual` and `exported` resource creation is
+supported, as is highest priority and merged Hiera lookups.
+
+So far, so boring. The interesting bit is the that `resource_factory` class,
+which can be instantiated via Hiera's node classifier, and configured
+using the standard Hiera class configuration look ups, creates various
+`defined_resource_factory` instances, by default, configured from the
+`resource_factories` key. Each of these `defined_resource_factory`
+instances create whatever resources you want, from whatever hiera key
+you want to look up. No site specific classes necessary; everything is
+configured out of Hiera as it should be.
+
+##Usage
+
+`resource_factory` and `defined_resource_factory` have almost exactly
+the same interface (and, indeed, source code), differing only in that
+one is a class, while the other is a defined resource type. The class,
+`resource_factory` has defaults for it's *hiera_key* and
+*resource_type*, while the resource has none, and it uses merged look
+ups by default, where the resource defaults to priority. The resource
+has a *defaults* field, while the class doesn't.
+
+###Parameters
+
+####hiera_key
+
+Key in your hiera data sources to look up, the contents being in a form
+that the built in `create_resources` function can combine with the resource
+type to create instances of it. Defaults to *'resources_factories'* on
+the class, and has no default on the type.
+
+####resource_type
+
+The name of the resource that `create_resources` function will produce
+from the data in our hiera key. Defaults to
+*'resource_factory::defined_resource_factory'* on the class, and has no
+default on the type.
+
+####enable
+
+Toggles the activation of the class or type on or off. Defaults to *'true'*,
+fairly obviously. It can be handy to toggle the class off for particular nodes
+under unusual circumstances, but you'll probably get better results
+disabling specific factories.
+
+####resource_creation
+
+Sets how the resources are created, as either the *default*, *virtual* or
+*exported* resources. Defaults to *'default'*.
+
+####merged
+Sets whether to use the hiera_key in the most specific hiera source,
+or merged from all matching sources. Defaults to *'true'*, merging all
+factory definitions, on the class, but defaults to *'false'* on the type.
+
+####defaults
+A hash of fields and values to supply as default values for the
+resource being created, if your hiera data doesn't include those
+fields. Defaults to an empty hash, and is not present on the class.
+
+##Examples
+
+As `resource_factory` will only ever be used in the context of Hiera, these
+examples are in the Hiera configuration context, using YAML.
+
+1. Put `resource_factory` into the included classes in your most common Hiera
+file, eg.
+
+```
+---
+classes:
+    resource_factory
+    ...
+```
+
+2. Now you can add instances of the *'resources_factories'* key in
+various places. For example, if you expect to define a bunch of APT
+related resources at some Debian derived distro level, add the
+following there:
+
+```
+resource_factories:
+    'apt_source_factory':
+        hiera_key:      apt_sources
+        resource_type:  apt::source
+        merge:          true
+    'apt_ppa_factory':
+        hiera_key:      apt_ppas
+        resource_type:  apt::ppa
+        merge:          true
+    'apt_conf_factory':
+        hiera_key:      apt_confs
+        resource_type:  apt::conf
+        merge:          true
+```
+
+3. Then you can set those hiera keys with your particular resources, eg:
+
+```
+apt_confs:
+    'proxy':
+        content: 'Acquire::http { Proxy "http://apt-cacher:3142/"; };'
+        priority: 10
+```
+
+In this case I've set `merge: true`, for the "general repositories
+plus more specific repositories" approach, however you can override
+that behaviour by setting that particular factory again in a higher
+priority context. If you want to eliminate a factory for a particular
+node, override it on the node with `enable: false`.
+
+If you want to set default properties in your resources, you can do so
+with the `defaults' field. Using the above example again:
+
+```
+resource_factories:
+    'apt_conf_factory':
+        hiera_key:      apt_confs
+        resource_type:  apt::conf
+        merge:          true
+		defaults:
+			priority:   10 
+```
+So that each apt_conf entry won't need to explicitly set priority:
+
+```
+apt_confs:
+    'proxy':
+        content: 'Acquire::http { Proxy "http://apt-cacher:3142/"; };'
+```
+
+You can even go as far as defining the same resource type with
+different sets of defaults by using different `hiera_key` names for each.
+
+##Limitations
+
+This is obviously of no use to you if you don't use Hiera. It also
+needs the `create_resources` function, which is available from puppet 2.7.x
+onwards, or via `bodepd/create_resources`, and both `hiera` and `hiera_hash`
+functions, avaiable since who knows, as puppet doesn't document
+version introduction in their function reference.
+
+##License
+
+Apache 2.0 License; a copy is included in the module.
+
+##Thanks
+
+* Mathias Brodala, for the 'defaults' patch.
+
+##To Do
+
+* Write tests, which means figuring out how the test frameworks operate. Pull 
+requests welcome.
+* Make the manifest docs look pretty in RDoc; which is a challenge given 
+how ugly RDoc looks by default.
